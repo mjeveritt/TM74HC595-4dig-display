@@ -1,4 +1,5 @@
 #include <TM74HC595Display.h>
+#include <TimerOne.h>
 
 int SCLK = 7;
 int RCLK = 6;
@@ -38,32 +39,67 @@ void setup() {
   LED_0F[27] = 0x91; //Y
   LED_0F[28] = 0xFE; //hight -
 
+  
+  Timer1.initialize(1500); // set a timer of length 1500
+  Timer1.attachInterrupt(timerIsr); // attach the service routine here
+
 }
 
 void loop() {  
 
-  disp.send(LED_0F[0], 0b0001);    //send digital "0" to 1st indicator
-  delay(2000);
-  disp.send(LED_0F[3], 0b0110);    //send digital "3" to 2nd and 3rd indicator
-  delay(2000);
-  disp.send(LED_0F[10], 0b1111);    //send simbol "A" to all indicators
-  delay(2000);
+  disp.set(LED_0F[0], 0);    //send digital "0" to 1st indicator
+  delay(1000);
+  disp.clear();   //clear display
+  
+  disp.set(LED_0F[3], 1);    //send digital "3" to 2nd indicator
+  delay(1000);
+  disp.clear();   //clear display
+  
+  disp.set(LED_0F[10], 2);    //send simbol "A" to 3rd indicators
+  delay(1000);
+  disp.clear();   //clear display
+  
+  disp.set(LED_0F[11], 3);    //send simbol "b" to 4rd indicators
+  delay(1000);
+  disp.clear();   //clear display
+
+  disp.dispFloat(-1.32, 2); //send float indicators
+  delay(1000);
+  disp.clear();   //clear display
+
 
   for(int i = 0; i<=99; i++){
-  disp.digit2(i, 0b0001, 50);               //send counter 0-99 with delay 50 cicles int 1st and 2nd view ports
+  disp.digit2(i, 0);               //send counter 0-99 in 1st and 2nd view ports
+  delay(50);
   }
 
-   for(int i = 0; i<=99; i++){
-  disp.digit2(i, 0b0100, 50);               //send counter 0-99 with delay 50 cicles int 3st and 4rd view ports
+   disp.clear();
+
+  for(int i = 0; i<=99; i++){
+  disp.digit2(i, 1);               //send counter 0-99 in 3rd and 4rd view ports
+  delay(50);
   }
+
+  disp.clear();
 
   for(int i = 0; i<=100; i++){
-  disp.digit4showZero(i, 50);               //send counter 0-100 with delay 50 cicles with zero
+  disp.digit4showZero(i);               //send counter 0-100 with zero
+  delay(50);
   }
+  disp.clear();
 
   for(int i = 0; i<=9999; i++){
-  disp.digit4(i, 50);               //send counter 0-9999 with delay 50 cicles and hide zero
+  disp.digit4(i);               //send counter 0-9999 hide zero
+  delay(10);
   }
-  
+  disp.clear();
+
 }
+
+
+void timerIsr()
+{
+  disp.timerIsr();
+}
+
 

@@ -9,20 +9,22 @@ class TM74HC595Display
 {
   public:
     TM74HC595Display(int SCLK, int RCLK, int DIO);
+	void timerIsr();
     void send(unsigned char X);
 	void send(unsigned char X, unsigned char port);
-	void digit4(int n, int replay, bool showZero);
-	void digit4(int n, int replay);
+	void dispFloat(float f, int afterPoint);
+	void digit4(int n, bool showZero);
 	void digit4(int n);
-	void digit4showZero(int n, int replay);
 	void digit4showZero(int n);
 	void digit2(int n, int port);
-	void digit2(int n, int port, int replay);
+	void set(unsigned char X, int port );
+	void clear();
 
   private:
     int _SCLK;
 	int _RCLK;
 	int _DIO;
+	int _DATA[4];
 };
  
 #endif
